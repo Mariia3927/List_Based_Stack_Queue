@@ -12,6 +12,7 @@ public:
 	~List() { Clear(); }
 
 	List<T>& operator=(const List<T>& list);
+	List<T>& operator=(List<T>&& list);
 
 protected:
 	void PushFront(const T& data);
@@ -59,6 +60,7 @@ void List<T>::CopyList(const List<T>& list)
 		}
 		root = root->m_next.get();
 	}
+
 	m_head = std::move(newHead);
 	m_size = list.m_size;
 	m_currentNode = m_head.get();
@@ -81,12 +83,32 @@ List<T>::List(List<T>&& list)
 template <typename T>
 List<T>& List<T>::operator=(const List<T>& list)
 {
+	if (this == &list)
+	{
+		return *this;
+	}
+
 	if (m_head)
 	{
 		Clear();
 	}
 
 	CopyList(list);
+
+	return *this;
+}
+
+template <typename T>
+List<T>& List<T>::operator=(List<T>&& list)
+{
+	if (this == &list)
+	{
+		return *this;
+	}
+
+	m_head = std::move(list.m_head);
+	m_size = list.m_size;
+	m_currentNode = m_head.get();
 
 	return *this;
 }
@@ -192,10 +214,7 @@ void List<T>::PopBack()
 template <typename T>
 void List<T>::Clear()
 {
-	while (m_head)
-	{
-		m_head = std::move(m_head->m_next);
-	}
+	m_head.reset();
 	m_size = 0;
 	m_currentNode = nullptr;
 }
@@ -214,4 +233,6 @@ const T& List<T>::Back()
 
 		return ptr->m_data;
 	}
+
+	return T();
 }

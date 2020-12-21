@@ -2,8 +2,7 @@
 #include "pch.h"
 
 template <typename T>
-class Stack :
-	public List<T>
+class Stack : public List<T>
 {
 public:
 	Stack() : List<T>() { }
@@ -12,6 +11,7 @@ public:
 	~Stack() { List<T>::Clear(); }
 
 	Stack<T>& operator=(const Stack<T>& stack) { return List<T>::operator=(stack); }
+	Stack<T>& operator=(Stack<T>&& stack) { return List<T>::operator=(stack); }
 
 	void Push(T data) { List<T>::PushFront(data); }
 	void Emplace(int pos, const T& data) { List<T>::Emplace(pos, data); }
